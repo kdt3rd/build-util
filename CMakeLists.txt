@@ -38,7 +38,7 @@ macro(DUP_FILES_TO_BINARY_AND_INSTALL)
   foreach(_curarg ${ARGN})
     get_filename_component(_curfile "${_curarg}" NAME)
     configure_file(${_curarg} ${CMAKE_CURRENT_BINARY_DIR}/${_curfile} COPYONLY)
-    list(APPEND _filelist ${CMAKE_CURRENT_BINARY_DIR}/${_curarg})
+    list(APPEND _filelist ${CMAKE_CURRENT_BINARY_DIR}/${_curfile})
   endforeach()
   install(
     FILES ${_filelist}

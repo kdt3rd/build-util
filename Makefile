@@ -115,7 +115,11 @@ release: $(REL_ROOT)/$(GEN_FILE)
 
 $(REL_ROOT)/$(GEN_FILE):
 	@$(MKDIR) -p $(REL_ROOT)
+ifneq (,$(prefix))
+	@$(CD) $(REL_ROOT) && ($(CMAKE) -DCMAKE_INSTALL_PREFIX=$(prefix) -DCMAKE_BUILD_TYPE=$(REL_TARG) -G $(GENERATOR) $(PWD) || exit 1)
+else
 	@$(CD) $(REL_ROOT) && ($(CMAKE) -DCMAKE_BUILD_TYPE=$(REL_TARG) -G $(GENERATOR) $(PWD) || exit 1)
+endif
 
 debug: $(DBG_ROOT)/$(GEN_FILE)
 	@$(DISPATCHER) -C $(DBG_ROOT) $(TARGETS)
