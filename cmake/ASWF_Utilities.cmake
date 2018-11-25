@@ -28,6 +28,8 @@ endmacro(ASWF_SET_SO_VERSION)
 
 # retrieve a target property, with a default if the property has
 # not been set
+#
+# This was based on a sample macro found on the Kitware wiki
 macro(ASWF_GET_TARGET_PROPERTY_WITH_DEFAULT _var _target _property _def_value)
   get_target_property(${_var} ${_target} ${_property})
   if (${_var} MATCHES NOTFOUND)
@@ -35,6 +37,8 @@ macro(ASWF_GET_TARGET_PROPERTY_WITH_DEFAULT _var _target _property _def_value)
   endif()
 endmacro(ASWF_GET_TARGET_PROPERTY_WITH_DEFAULT)
 
+# This was based on a sample macro found on the Kitware wiki but
+# has added support for the libsuffix, etc.
 macro(ASWF_CREATE_LIBTOOL_FILE _target _install_DIR)
   #set(_target_location $<TARGET_FILE:${_target}>)
 

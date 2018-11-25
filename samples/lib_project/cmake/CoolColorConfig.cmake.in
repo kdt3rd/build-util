@@ -1,0 +1,81 @@
+#
+#  Copyright 2018 Kimball Thurston
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+# Sample project config, this should be able to be liberally copied
+# without having to update much.
+#
+# NB: If you don't use the provided aswf_setup_project_config_install
+# macro, which assumes the file is named <ProjectName>Config.cmake.in,
+# then make sure to process with @ONLY to avoid expanding
+# the variable usage in here
+set(_aswf_cur_root @PROJECT_NAME@)
+
+get_filename_component( ${_aswf_cur_root}_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+# push the current folder onto the search path
+list(APPEND CMAKE_MODULE_PATH ${${_aswf_cur_root}_CMAKE_DIR})
+
+# what version
+set(${_aswf_cur_root}_VFXPLAT_VERSION @ASWF_VFXPLAT_VERSION@)
+# what libraries were used
+set(${_aswf_cur_root}_VFXPLAT_DEPENDENCIES @ASWF_VFXPLAT_DEPENDENCIES@)
+if(DEFINED ${_aswf_cur_root}_VFXPLAT_VERSION)
+  # TODO: add appropriate checks that compile flags are compatible
+  # (mostly c++ std version 11/14/17/etc.)
+  message(FATAL_ERROR "TODO: add c++XX version checks, etc")
+endif()
+
+if(DEFINED ${_aswf_cur_root}_VFXPLAT_DEPENDENCIES)
+  foreach(_aswf_cur_dep IN LISTS ${_aswf_cur_root}_VFXPLAT_DEPENDENCIES)
+    message(FATAL_ERROR "TODO: add logic to pull in dependency on ${_aswf_cur_dep}")
+  endforeach()
+endif()
+# find_dependency doesn't support components until 3.8+
+#include(CMakeFindDependencyMacro)
+#find_dependency(Boost 1.55 REQUIRED COMPONENTS regex)
+#find_dependency(Foo 1.0 REQUIRED MODULE)
+find_package(Boost 1.55 REQUIRED COMPONENTS regex)
+find_package(Foo 1.0 REQUIRED MODULE)
+
+#find_package(<package> [version] [EXACT] [QUIET]
+#  [REQUIRED] [[COMPONENTS] [components...]]
+#  [CONFIG|NO_MODULE]
+#  [NO_POLICY_SCOPE]
+#  [NAMES name1 [name2 ...]]
+#  [CONFIGS config1 [config2 ...]]
+#  [HINTS path1 [path2 ... ]]
+#  [PATHS path1 [path2 ... ]]
+#  [PATH_SUFFIXES suffix1 [suffix2 ...]]
+#  [NO_DEFAULT_PATH]
+#  [NO_CMAKE_ENVIRONMENT_PATH]
+#  [NO_CMAKE_PATH]
+#  [NO_SYSTEM_ENVIRONMENT_PATH]
+#  [NO_CMAKE_PACKAGE_REGISTRY]
+#  [NO_CMAKE_BUILDS_PATH] # Deprecated; does nothing.
+#  [NO_CMAKE_SYSTEM_PATH]
+#  [NO_CMAKE_SYSTEM_PACKAGE_REGISTRY]
+#  [CMAKE_FIND_ROOT_PATH_BOTH |
+#  ONLY_CMAKE_FIND_ROOT_PATH |
+#  NO_CMAKE_FIND_ROOT_PATH])
+
+# pop the current folder
+list(REMOVE_AT CMAKE_MODULE_PATH -1)
+
+if(NOT TARGET ${_aswf_cur_root}::${_aswf_cur_root})
+  include("${${_aswf_cur_root}_CMAKE_DIR}/${_aswf_cur_root}Targets.cmake")
+endif()
+
+set(${_aswf_cur_root}_LIBRARIES ${_aswf_cur_root}::${_aswf_cur_root})
+

@@ -13,10 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Simple test, no vfx platform, just with it all included by the
-# top-level CMakeLists.txt to check syntax, and that it doesn't
-# pollute anything
+get_filename_component(ASWF_Cmake_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" DIRECTORY)
+list(INSERT CMAKE_MODULE_PATH 0 "${ASWF_Cmake_CMAKE_DIR}")
 
-add_executable(SimpleTest EXCLUDE_FROM_ALL main.cpp)
-add_test(NAME Simple COMMAND SimpleTest)
-add_dependencies(check SimpleTest)

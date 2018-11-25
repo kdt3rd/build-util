@@ -13,10 +13,28 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Simple test, no vfx platform, just with it all included by the
-# top-level CMakeLists.txt to check syntax, and that it doesn't
-# pollute anything
+set(CoolColor_SOURCE
+  xyY.cpp
+  )
 
-add_executable(SimpleTest EXCLUDE_FROM_ALL main.cpp)
-add_test(NAME Simple COMMAND SimpleTest)
-add_dependencies(check SimpleTest)
+set(CoolColor_PUBHEADERS
+  xyY.h
+  )
+
+# This isn't really necessary for compiling but is included here for
+# those who generate things such as visual studio projects and want to
+# be able to browse all the source easily
+set(CoolColor_PRIVHEADERS
+  priv_util.h
+  )
+
+# use the vfx variant of this since we've enabled vfx platform...
+# (otherwise use aswf_add_install_library)
+aswf_add_vfx_install_library(CoolColor
+  SOURCE
+    ${CoolColor_SOURCE}
+  PUBLIC
+    ${CoolColor_PUBHEADERS}
+  PRIVATE
+    ${CoolColor_PUBHEADERS}
+  )

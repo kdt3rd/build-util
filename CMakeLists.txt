@@ -1,53 +1,63 @@
-# Sample cmake file
+#
+#  Copyright 2018 Kimball Thurston
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
 
-# You should always require a minimal cmake version
-# newer versions should be favored, if only to add new versions of MS visual studio
-# support and the like
-if (WIN32)
-  cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
-else()
-  cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
-endif()
-
-# This auto sets various version number variables in project to
-# the empty string
+# NB: This is not a canonical cmake file to use as a template to set
+# up your project. Instead, this is the cmake file used to actually
+# install this project (or create a package to be able to do so)
+#
+# If you are looking for a sample project file with comments, please
+# see the samples folder
+cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
 cmake_policy(SET CMP0048 NEW)
 
-# Add our cmake macro / function path to the project
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
-###################
-# Start the project
-###################
-# Set the project name and version number
-# NB: this will auto-set PROJECT_VERSION, <PROJECT-NAME>_VERSION
-# and all the related major/minor/patch/tweak variables
-#
-# NB2: If you are building multiple conceptual things within one tree that
-# share a version, you may want to put a Version.cmake in the cmake folder
-# and include that first, such that the version number is shared
-#
-# NB3: the project command is special to cmake, and if one is provided,
-# even in a macro that is then called at the top level, and implicit
-# project creation happens, which can subtly change the order things are
-# searched for, among other issues
-project(MyProject VERSION 1.0.0 LANGUAGES C CXX)
+project(ASWF_Cmake VERSION 1.0.0)
 
-# include common settings and macros from ASWF to make the rest of this easier
 include(ASWF)
-# if the defaults don't work for you...
-#aswf_set_api_version(MyProject ${PROJECT_VERSION_MAJOR} ${PROJECT_VERSION_MINOR})
-#aswf_set_so_version(MyProject 1)
 
-# now that we have started the project, include the various configuration
-# settings this project offers
-include(Settings)
+aswf_setup_project_config_install(VERSION_DISPOSITION AnyNewerVersion)
 
-# Download any dependencies
-# NB: this is NOT currently recommended, as facilities subject
-# to MPAA security rules may have strict firewall rules
-# preventing general outside access
-#
-#file(DOWNLOAD https://github.com/AcademySoftwareFoundation/build-utils/find/FindFoo.cmake ${CMAKE_CURRENT_BINARY_DIR}/FindFoo.cmake)
+# we do this configure_file stuff to make it such that local user
+# repos that are "made" and exported will function correctly without
+# having to have special checks in the ASWF_CmakeConfig.cmake
+macro(DUP_FILES_TO_BINARY_AND_INSTALL)
+  set(_filelist)
+  foreach(_curarg ${ARGN})
+    get_filename_component(_curfile "${_curarg}" NAME)
+    configure_file(${_curarg} ${CMAKE_CURRENT_BINARY_DIR}/${_curfile} COPYONLY)
+    list(APPEND _filelist ${CMAKE_CURRENT_BINARY_DIR}/${_curarg})
+  endforeach()
+  install(
+    FILES ${_filelist}
+    DESTINATION ${${PROJECT_NAME}_INSTALL_CONFIGDIR}
+    )
+endmacro(DUP_FILES_TO_BINARY_AND_INSTALL)
 
-add_subdirectory(tests)
+dup_files_to_binary_and_install(
+  cmake/ASWF.cmake
+  cmake/ASWF_AddMacros.cmake
+  cmake/ASWF_DocMacros.cmake
+  cmake/ASWF_InstallMacros.cmake
+  cmake/ASWF_Utilities.cmake
+  cmake/ASWF_VarMap.cmake
+  cmake/ASWF_VFX_Checks.cmake
+  )
+
+if(ASWF_ENABLE_TESTS)
+  add_subdirectory(tests)
+endif()
+
+aswf_enable_package(VENDOR "Me" CONTACT "me@me.me" SUMMARY "cmake utility macros for ASWF / VFX Platform or any other package")

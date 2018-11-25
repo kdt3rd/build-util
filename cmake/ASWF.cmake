@@ -25,6 +25,15 @@
 
 # common options to expose to the configure tool/script
 
+# this has all the logic to construct gnu-compatible install folders
+# and seems to be what modern projects are using, where the cmake config
+# ends up in /usr/lib64/cmake/ProjectName/*.cmake
+# rather than using the old FindProjectName.cmake mechanisms
+#
+# Given that these are just folder names, they are fine under windows
+# etc.
+include(GNUInstallDirs)
+
 option(ASWF_BUILD_SHARED "Build Shared Libraries" ON)
 option(ASWF_BUILD_STATIC "Build Static Libraries" OFF)
 
@@ -35,6 +44,10 @@ option(ASWF_DSO_VERSIONING "Enable DSO versioning" ON)
 
 include(ASWF_VFX_Checks)
 
+if(NOT ASWF_BUILD_SHARED AND NOT ASWF_BUILD_STATIC)
+  message(FATAL_ERROR "At least one build configuration of shared / static must be enabled")
+endif()
+  
 ##########
 
 if(ASWF_NAMESPACE_VERSIONING)
@@ -62,15 +75,10 @@ endif(ASWF_DSO_VERSIONING)
 if(ASWF_ENABLE_TESTS)
   include(CTest)
   enable_testing()
+  # we add a custom command "check" that will compile all the tests
+  # first (if we add dependencies)
+  add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 endif(ASWF_ENABLE_TESTS)
-
-# installation related settings
-set(CPACK_PROJECT_NAME             ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION          ${PROJECT_VERSION})
-set(CPACK_SOURCE_IGNORE_FILES      "/.git*;/.cvs*;${CPACK_SOURCE_IGNORE_FILES}")
-set(CPACK_SOURCE_GENERATOR         "TGZ")
-set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${PROJECT_VERSION}" )
-include(CPack)
 
 # MacOS & linux rpathing, meaning things can be run in-place,
 # and are correctly re-linked upon install to pull any DSO
@@ -92,3 +100,5 @@ ENDIF()
 
 include(ASWF_Utilities)
 include(ASWF_AddMacros)
+include(ASWF_DocMacros)
+include(ASWF_InstallMacros)
