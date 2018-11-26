@@ -18,7 +18,7 @@
 #include <cmath>
 #include <array>
 
-COOL_COLOR_NAMESPACE_ENTER
+COOLCOLOR_NAMESPACE_ENTER
 
 // NB: this is not the worlds most exciting library nor a particularly
 // generic or strongly typed one, but that is not it's purpose
@@ -27,4 +27,4 @@ using XYZ_f = std::array<float, 3>;
 
 XYZ_f xyToXYZ( const xy_f &xy, float Y = 1.f );
 
-COOL_COLOR_NAMESPACE_EXIT
+COOLCOLOR_NAMESPACE_EXIT

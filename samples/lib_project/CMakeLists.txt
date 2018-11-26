@@ -52,13 +52,13 @@ project(CoolColor VERSION 1.0.0 LANGUAGES C CXX)
 # to find the ASWF cmake setup...
 include(EnableASWF)
 
-# This should be called at the beginning (before any add_subdirectory etc calls)
-aswf_enable_vfx_platform()
+# We will be providing a library, so create the generic settings for
+# such a project
+aswf_create_library_settings()
 
-# allows the user to set a custom namespace to use
-set(COOL_NAMESPACE "CoolColor" CACHE STRING "Namespace name to use")
-# we also pass through the global flag whether to use namespace versioning
-set(COOL_COLOR_USE_NAMESPACE_VERSIONING ${ASWF_NAMESPACE_VERSIONING})
+# This should be called at the beginning (before any add_subdirectory
+# etc calls) when making a VFX platform enabled piece of software
+aswf_enable_vfx_platform()
 
 # run configure_file to generate a .h we will include in the release
 configure_file(Config.h.in CoolColor/Config.h)

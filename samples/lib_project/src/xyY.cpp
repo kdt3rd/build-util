@@ -16,8 +16,7 @@
 #include "xyY.h"
 #include "priv_util.h"
 
-namespace COOL_COLOR_NAMESPACE
-{
+COOLCOLOR_NAMESPACE_ENTER
 
 // NB: this is not the worlds most exciting library nor a particularly
 // generic or strongly typed one, but that is not it's purpose
@@ -34,5 +33,5 @@ XYZ_f xyToXYZ( const xy_f &xy, float Y )
     return XYZ_f{ Y * x, Y, Y * ( 1.f - x ) };
 }
 
-} // COOL_COLOR_NAMESPACE
+COOLCOLOR_NAMESPACE_EXIT
 

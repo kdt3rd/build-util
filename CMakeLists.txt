@@ -51,8 +51,8 @@ dup_files_to_binary_and_install(
   cmake/ASWF_AddMacros.cmake
   cmake/ASWF_DocMacros.cmake
   cmake/ASWF_InstallMacros.cmake
+  cmake/ASWF_LibrarySupport.cmake
   cmake/ASWF_Utilities.cmake
-  cmake/ASWF_VarMap.cmake
   cmake/ASWF_VFX_Checks.cmake
   )
 

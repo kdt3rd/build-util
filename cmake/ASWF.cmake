@@ -34,44 +34,13 @@
 # etc.
 include(GNUInstallDirs)
 
-option(ASWF_BUILD_SHARED "Build Shared Libraries" ON)
-option(ASWF_BUILD_STATIC "Build Static Libraries" OFF)
-
-option(ASWF_ENABLE_TESTS "Enable the tests" ON)
-
-option(ASWF_NAMESPACE_VERSIONING "Use Namespace Versioning" ON)
-option(ASWF_DSO_VERSIONING "Enable DSO versioning" ON)
+include(ASWF_Utilities)
 
 include(ASWF_VFX_Checks)
-
-if(NOT ASWF_BUILD_SHARED AND NOT ASWF_BUILD_STATIC)
-  message(FATAL_ERROR "At least one build configuration of shared / static must be enabled")
-endif()
-  
-##########
-
-if(ASWF_NAMESPACE_VERSIONING)
-  if(PROJECT_VERSION_MAJOR STREQUAL "" OR PROJECT_VERSION_MINOR STREQUAL "")
-    message(FATAL_ERROR "In order to enable namespace versioning, please include ASWF.cmake file after declaring your top level project with major.minor version number")
-  endif(PROJECT_VERSION_MAJOR STREQUAL "" OR PROJECT_VERSION_MINOR STREQUAL "")
-  set(PROJECT_VERSION_API ${PROJECT_VERSION_MAJOR}_${PROJECT_VERSION_MINOR})
-  set(${PROJECT_NAME}_VERSION_API ${PROJECT_VERSION_API})
-  set(PROJECT_LIBSUFFIX "-${PROJECT_VERSION_API}")
-  set(${PROJECT_NAME}_LIBSUFFIX ${PROJECT_LIBSUFFIX})
-else(ASWF_NAMESPACE_VERSIONING)
-  set(PROJECT_LIBSUFFIX "")
-  set(${PROJECT_NAME}_LIBSUFFIX "")
-endif(ASWF_NAMESPACE_VERSIONING)
-
-if(ASWF_DSO_VERSIONING)
-  if(PROJECT_VERSION_MAJOR STREQUAL "")
-    message(FATAL_ERROR "In order to enable namespace versioning, please include ASWF.cmake file after declaring your top level project with major.minor version number")
-  endif(PROJECT_VERSION_MAJOR STREQUAL "")
-  set(PROJECT_SOVERSION ${PROJECT_VERSION_MAJOR})
-  set(${PROJECT_NAME}_SOVERSION ${PROJECT_SOVERSION})
-endif(ASWF_DSO_VERSIONING)
+include(ASWF_LibrarySupport)
 
 # if the testing is enabled, we turn that on
+option(ASWF_ENABLE_TESTS "Enable the tests" ON)
 if(ASWF_ENABLE_TESTS)
   include(CTest)
   enable_testing()
@@ -98,7 +67,6 @@ IF(WIN32)
   SET(CMAKE_DEBUG_POSTFIX "_d")
 ENDIF()
 
-include(ASWF_Utilities)
 include(ASWF_AddMacros)
 include(ASWF_DocMacros)
 include(ASWF_InstallMacros)
