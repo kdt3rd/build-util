@@ -189,13 +189,13 @@ macro(ASWF_ADD_INSTALL_LIBRARY name)
   # This defines a source group to appear in visual studio and similar
   # generators generated files...
   if (_src)
-    source_group("${PROJECT_NAME}\\Source Files" FILES ${_src})
+    source_group("${PROJECT_NAME}\\${name}\\Source Files" FILES ${_src})
   endif(_src)
   if (_pub_headers)
-    source_group("${PROJECT_NAME}\\Public Headers" FILES ${_pub_headers})
+    source_group("${PROJECT_NAME}\\${name}\\Public Headers" FILES ${_pub_headers})
   endif(_pub_headers)
   if (_priv_headers)
-    source_group("${PROJECT_NAME}\\Private Headers" FILES ${_priv_headers})
+    source_group("${PROJECT_NAME}\\${name}\\Private Headers" FILES ${_priv_headers})
   endif(_priv_headers)
 
   unset(_targs)
@@ -203,6 +203,42 @@ macro(ASWF_ADD_INSTALL_LIBRARY name)
   unset(_pub_headers)
   unset(_priv_headers)
 endmacro(ASWF_ADD_INSTALL_LIBRARY)
+
+# This is for libraries that are only used internally
+# such as a library that contains source for unit tests
+# This currently only builds a static library
+macro(ASWF_ADD_INTERNAL_LIBRARY name)
+  # TODO: do we have other flags to process in here?
+  _intern_aswf_extract_source_headers(_src _pub_headers _priv_headers _defines ${ARGN})
+
+  add_library(${name}_static STATIC ${_src})
+  add_library(${PROJECT_NAME}::${name}_static ALIAS ${name}_static)
+  add_library(${PROJECT_NAME}::${name} ALIAS ${name}_static)
+  set_target_properties(${name}_static
+    PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
+    VERSION ${PROJECT_VERSION}
+    OUTPUT_NAME "${name}${${name}_LIBSUFFIX}${ASWF_STATIC_SUFFIX}"
+    )
+  target_include_directories(${name}_static
+    PUBLIC
+      $<INSTALL_INTERFACE:include>
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+      $<BUILD_INTERFACE:${${PROJECT_NAME}_BINARY_DIR}/include>
+      $<BUILD_INTERFACE:${${PROJECT_NAME}_BINARY_DIR}>
+    PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+  if (_src)
+    source_group("${PROJECT_NAME}\\${name}\\Source Files" FILES ${_src})
+  endif(_src)
+  if (_pub_headers)
+    source_group("${PROJECT_NAME}\\${name}\\Public Headers" FILES ${_pub_headers})
+  endif(_pub_headers)
+  if (_priv_headers)
+    source_group("${PROJECT_NAME}\\${name}\\Private Headers" FILES ${_priv_headers})
+  endif(_priv_headers)
+endmacro(ASWF_ADD_INTERNAL_LIBRARY)
 
 ########################################
 

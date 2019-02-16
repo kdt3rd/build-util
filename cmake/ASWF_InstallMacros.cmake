@@ -1,17 +1,5 @@
-#
-#  Copyright 2018 Kimball Thurston
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
+# Copyright (c) 2018 ASWF Build Util Project and contributors
+# SPDX-License-Identifier: MIT
 
 # aswf_setup_project_config_install(
 #   [target1 target2 ...]
@@ -84,6 +72,9 @@ macro(ASWF_SETUP_PROJECT_CONFIG_INSTALL _ver_disp)
     )
 
   # export to user's local registry
+  # TODO: add logic to remove <Project>Config.cmake from build tree
+  # on install to invalidate user registry??? probably want a flag
+  # to control that behavior so windows users aren't sad
   get_property(_aswf_exports GLOBAL PROPERTY "ASWF_${_aswf_proj}_HAS_EXPORTS" SET)
   if(_aswf_exports)
     export(EXPORT ${_aswf_proj}-targets FILE ${CMAKE_CURRENT_BINARY_DIR}/${_aswf_proj}Targets.cmake NAMESPACE ${_aswf_proj}::)
